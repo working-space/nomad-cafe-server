@@ -2,10 +2,11 @@
 8기 7조 디지털 노마드를 위한 주변 카페 알리미(Server)
 ---
 
-### 사용 기술
+### 기술 스택
 WAS : Python(Django)   
 WS : Nginx   
 WSGI : Gunicorn   
+DB : MongoDB
 Container : Docker
 
 ### 구조
