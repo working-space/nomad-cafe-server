@@ -28,7 +28,7 @@ CI/CD : Github Action
 ![NCP 예시](https://xv-ncloud.pstatic.net/images/architectures/1-1_%EC%86%8C%EA%B7%9C%EB%AA%A8%20%EC%9B%B9%EC%82%AC%EC%9D%B4%ED%8A%B8_1558003564488.png)
 
 ### 참조 링크
-[Django RestAPI Qucikstart](https://www.django-rest-framework.org/tutorial/quickstart/)
+[Django RestAPI Quickstart](https://www.django-rest-framework.org/tutorial/quickstart/)
 
 [Django 프로젝트 배포(with docker, nginx, gunicorn)](https://teamlab.github.io/jekyllDecent/blog/tutorials/docker%EB%A1%9C-django-%EA%B0%9C%EB%B0%9C%ED%95%98%EA%B3%A0-%EB%B0%B0%ED%8F%AC%ED%95%98%EA%B8%B0(+-nginx,-gunicorn))
 
