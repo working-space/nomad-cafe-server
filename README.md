@@ -6,7 +6,7 @@
 WAS : Python(Django)   
 WS : Nginx   
 WSGI : Gunicorn   
-DB : MongoDB
+DB : MongoDB   
 Container : Docker
 
 ### 구조
