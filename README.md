@@ -8,6 +8,8 @@ WS : Nginx
 WSGI : Gunicorn   
 DB : MongoDB   
 Container : Docker
+Authentication : AWS Cognito
+CI/CD : Github Action
 
 ### 구조
 
@@ -31,5 +33,7 @@ Container : Docker
 [Django 설치 가이드-1](https://inma.tistory.com/125)
 
 [Django 설치 가이드-2](https://soyoung-new-challenge.tistory.com/74)
+
+[Django with AWS Cognito](https://djangostars.com/blog/bootstrap-django-app-with-cognito/)
 
 [NCP 레퍼런스 아키텍쳐](https://www.ncloud.com/intro/architecture)
