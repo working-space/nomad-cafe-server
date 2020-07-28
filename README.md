@@ -28,4 +28,8 @@ Container : Docker
 ### 참조 링크
 [Django 프로젝트 배포(with docker, nginx, gunicorn)](https://teamlab.github.io/jekyllDecent/blog/tutorials/docker%EB%A1%9C-django-%EA%B0%9C%EB%B0%9C%ED%95%98%EA%B3%A0-%EB%B0%B0%ED%8F%AC%ED%95%98%EA%B8%B0(+-nginx,-gunicorn))
 
+[Django 설치 가이드-1](https://inma.tistory.com/125)
+
+[Django 설치 가이드-2](https://soyoung-new-challenge.tistory.com/74)
+
 [NCP 레퍼런스 아키텍쳐](https://www.ncloud.com/intro/architecture)
