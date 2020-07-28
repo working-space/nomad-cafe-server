@@ -11,6 +11,10 @@ Container : Docker
 
 ### 구조
 
+##### 아키텍쳐(기본 구상안)
+
+![Django With Gunicorn, Nginx and Docker](_images/example_architecture.jpg)
+
 ##### 아키텍쳐(W Microservices)
 
 **예시**
