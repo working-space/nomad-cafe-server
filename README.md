@@ -41,3 +41,5 @@ CI/CD : Github Action
 [NCP 레퍼런스 아키텍쳐](https://www.ncloud.com/intro/architecture)
 
 [Github action 정리](https://zzsza.github.io/development/2020/06/06/github-action/)
+
+[Static file 처리](https://nachwon.github.io/django-deploy-4-static/)

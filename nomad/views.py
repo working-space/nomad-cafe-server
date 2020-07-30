@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import viewsets
-from tutorial.quickstart.serializers import UserSerializer
+from nomad.serializers import UserSerializer
 # from django.shortcuts import render
 
 
