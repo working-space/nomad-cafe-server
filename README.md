@@ -140,4 +140,6 @@ services:
 
 [Github action 정리](https://zzsza.github.io/development/2020/06/06/github-action/)
 
-[Static file 처리](https://nachwon.github.io/django-deploy-4-static/)
+[Django Static file 처리](https://nachwon.github.io/django-deploy-4-static/)
+
+[Django Testcode 작성](https://new93helloworld.tistory.com/285)

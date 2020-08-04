@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
+from .models import Cafe
 from rest_framework import viewsets
-from nomad.serializers import UserSerializer
+from nomad.serializers import UserSerializer, CafeSerializer
 # from django.shortcuts import render
 
 
@@ -10,3 +11,8 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
+
+
+class CafeViewSet(viewsets.ModelViewSet):
+    queryset = Cafe.objects.filter(name="광전다방")
+    serializer_class = CafeSerializer
