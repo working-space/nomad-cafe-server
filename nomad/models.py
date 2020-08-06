@@ -1,12 +1,11 @@
 from django.db import models
 from djongo import models as mongo_models
+from django.contrib.postgres.fields import JSONField
 
 
-class Location(models.Model):
+class Location(mongo_models.Model):
     type = mongo_models.CharField(max_length=128)
-    # coordinates = mongo_models.ArrayField(
-    #     mongo_models.DecimalField(max_digits=19, decimal_places=10)
-    # )
+    coordinates = JSONField()
 
 
     class Meta:
@@ -21,7 +20,9 @@ class Cafe(mongo_models.Model):
     start_hours = mongo_models.CharField(max_length=512)
     end_hours = mongo_models.CharField(max_length=512)
     location = mongo_models.EmbeddedField(
-        model_container=Location
+        model_container=Location,
+        null=True,
+        blank=True
     )
     name = mongo_models.CharField(max_length=512)
     parcel_addr = mongo_models.CharField(max_length=512)
@@ -29,5 +30,8 @@ class Cafe(mongo_models.Model):
     road_addr = mongo_models.CharField(max_length=512)
     tags = mongo_models.CharField(max_length=512)
 
+    objects = mongo_models.DjongoManager()
+
     class Meta:
-        app_label = 'MongoDB' 
+        app_label = 'MongoDB'
+        db_table = 'cafe'

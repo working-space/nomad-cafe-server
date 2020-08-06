@@ -8,3 +8,5 @@
 from django.db import models
 # Unable to inspect table 'cafe'
 # The error was: 'NoneType' object is not subscriptable
+# Unable to inspect table 'nomad_cafe'
+# The error was: 'NoneType' object is not subscriptable

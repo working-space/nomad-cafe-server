@@ -14,5 +14,5 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 class CafeViewSet(viewsets.ModelViewSet):
-    queryset = Cafe.objects.filter(name="광전다방")
+    queryset = Cafe.objects.all()
     serializer_class = CafeSerializer

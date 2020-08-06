@@ -88,8 +88,9 @@ DATABASES = {
     'MongoDB': {
         'ENGINE': 'djongo',
         'NAME': 'nomad-cafe',
+        'ENFORCE_SCHEMA': False,
         'CLIENT': {
-            'host': 'mongodb+srv://nomad-cafe:shakemzkvp1234@nomad-cafe.kgqub.mongodb.net/nomad-cafe?retryWrites=true&w=majority',
+            'host': 'mongodb+srv://nomad-cafe:<PASSWORD>@nomad-cafe.kgqub.mongodb.net/nomad-cafe?retryWrites=true&w=majority'
         }
     }
 }
