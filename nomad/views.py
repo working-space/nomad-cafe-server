@@ -12,7 +12,7 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
 
-
+    
 class CafeViewSet(viewsets.ModelViewSet):
     queryset = Cafe.objects.all()
     serializer_class = CafeSerializer

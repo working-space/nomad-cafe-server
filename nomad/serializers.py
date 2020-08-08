@@ -13,7 +13,6 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['url']
 '''
 
-
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
