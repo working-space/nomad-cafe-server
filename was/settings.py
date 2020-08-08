@@ -25,12 +25,13 @@ SECRET_KEY = 'h&1$al_(c#$585le(ollze_p9ets6d9k5c_%3963+#+m_3hmxm'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['web', '127.0.0.1']
+ALLOWED_HOSTS = ['web', '127.0.0.1', '3.34.55.23']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'nomad.apps.NomadConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -83,9 +84,21 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    },
+    'MongoDB': {
+        'ENGINE': 'djongo',
+        'NAME': 'nomad-cafe',
+        'ENFORCE_SCHEMA': False,
+        'CLIENT': {
+            'host': 'mongodb+srv://nomad-cafe:<PASSWORD>@nomad-cafe.kgqub.mongodb.net/nomad-cafe?retryWrites=true&w=majority'
+        }
     }
 }
 
+
+DATABASE_ROUTERS = [
+    'nomad.routers.MultiDBRouter',
+]
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators

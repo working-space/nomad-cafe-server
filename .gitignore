@@ -1,0 +1,6 @@
+# Folder
+static_root/
+
+# File
+*.sqlite3
+*.pyc
