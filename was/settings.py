@@ -20,12 +20,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'h&1$al_(c#$585le(ollze_p9ets6d9k5c_%3963+#+m_3hmxm'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'unsafe-secret-key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', "True") == "True"
 
-ALLOWED_HOSTS = ['web', '127.0.0.1', '3.34.55.23']
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split()
 
 
 # Application definition
@@ -87,10 +87,10 @@ DATABASES = {
     },
     'MongoDB': {
         'ENGINE': 'djongo',
-        'NAME': 'nomad-cafe',
+        'NAME': os.environ.get('DB_NAME', 'nomad-cafe'),
         'ENFORCE_SCHEMA': False,
         'CLIENT': {
-            'host': 'mongodb+srv://nomad-cafe:<PASSWORD>@nomad-cafe.kgqub.mongodb.net/nomad-cafe?retryWrites=true&w=majority'
+            'host': os.environ.get('DB_HOST', None),
         }
     }
 }
