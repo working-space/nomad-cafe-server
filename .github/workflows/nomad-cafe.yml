@@ -29,8 +29,8 @@ jobs:
         IMAGE_TAG: ${{ github.sha }}
       run: |
         cd $GITHUB_WORKSPACE
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION -f Dockerfile .
-        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION $ECR_REGISTRY/$ECR_REPOSITORY:latest
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f Dockerfile .
+        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
@@ -39,9 +39,10 @@ jobs:
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # github 내부에서 적용되는 시크릿 변수이기 때문에 별도로 만들지 않아도 됨
+        IMAGE_TAG: ${{ github.sha }}
       with:
-        tag_name: v${{ steps.build-init.outputs.version }}
-        release_name: Release v${{ steps.build-init.outputs.version }}
+        tag_name: v$IMAGE_TAG
+        release_name: Release v$IMAGE_TAG
         body: |
           ${{ steps.build-init.outputs.git-commit-msg }}
         draft: false
