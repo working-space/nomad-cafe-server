@@ -41,7 +41,7 @@ jobs:
       id: create-release
       uses: actions/create-release@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # github 내부에서 적용되는 시크릿 변수이기 때문에 별도로 만들지 않아도 됨
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         IMAGE_TAG: ${{ github.sha }}
       with:
         tag_name: v$IMAGE_TAG
