@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from .models import Cafe
+from .models import Cafe, Location
 from rest_framework import viewsets
 from rest_framework.response import Response
 from nomad.serializers import UserSerializer, CafeSerializer
@@ -28,5 +28,33 @@ class CafeViewSet(viewsets.ReadOnlyModelViewSet):
         if _id is not None:
             queryset = queryset.filter(_id=_id)
         if address is not None:
-            queryset = queryset.filter(road_addr=address)
+            query_result = Cafe.objects.mongo_aggregate(
+                [
+                    {
+                        "$geoNear": {
+                            "near": {
+                                "type": "Point",
+                                "coordinates": [126.95641372307917, 37.48247619555855]
+                            },
+                            # "spherical": "true",
+                            "key": "location",
+                            "maxDistance": 5000,
+                            "distanceField": "dist.calculated",
+                            "query": {
+                                "road_addr": {"$regex": '^서울'}
+                            }
+                        }
+                    },
+                    {"$limit": 5}
+                ]
+            )
+            cafe_object = []
+            for query_object in query_result:
+                location_data = query_object.pop('location')
+                dist_data = query_object.pop('dist')
+                result = Cafe(**query_object)
+                # result.location.add(Location(**location_data), bulk=False)
+                cafe_object.append(result)
+            
+            return cafe_object
         return queryset
