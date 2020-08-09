@@ -1,0 +1,48 @@
+name: NomadCafe
+on:
+  push:
+    branches:
+      - master
+      - develop
+      - feature/cicd
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.aws_access_key }}
+        aws-secret-access-key: ${{ secrets.aws_secret_key }}
+        aws-region: ap-northeast-2
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build, tag, and push image to Amazon ECR
+      id: build-image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: nomad-cafe
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        cd $GITHUB_WORKSPACE
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION -f Dockerfile .
+        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION $ECR_REGISTRY/$ECR_REPOSITORY:latest
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+    - name: Create Release
+      id: create-release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # github 내부에서 적용되는 시크릿 변수이기 때문에 별도로 만들지 않아도 됨
+      with:
+        tag_name: v${{ steps.build-init.outputs.version }}
+        release_name: Release v${{ steps.build-init.outputs.version }}
+        body: |
+          ${{ steps.build-init.outputs.git-commit-msg }}
+        draft: false
+        prerelease: false
