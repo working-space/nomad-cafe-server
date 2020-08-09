@@ -10,11 +10,13 @@ services:
         depends_on:
             - web
     web:
-        build:
-            context: .
-            dockerfile: Dockerfile_with_apm
+        image: 992189553983.dkr.ecr.ap-northeast-2.amazonaws.com/nomad-cafe:latest
         environment:
             - NEW_RELIC_LICENSE_KEY=${NEW_RELIC_LICENSE_KEY}
-        command: newrelic-admin run-program gunicorn was.wsgi:application --bind 0.0.0.0:8000
+            - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+            - DJANGO_DEBUG=${DJANGO_DEBUG}
+            - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
+            - DB_NAME=${DB_NAME}
+            - DB_HOST=${DB_HOST}
         expose:
             - "8000"
