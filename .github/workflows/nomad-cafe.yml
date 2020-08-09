@@ -37,16 +37,16 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-    - name: Create Release
-      id: create-release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        IMAGE_TAG: ${{ github.sha }}
-      with:
-        tag_name: v$IMAGE_TAG
-        release_name: Release v$IMAGE_TAG
-        body: |
-          ${{ steps.build-init.outputs.git-commit-msg }}
-        draft: false
-        prerelease: false
+#    - name: Create Release
+#      id: create-release
+#      uses: actions/create-release@v1
+#      env:
+#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        IMAGE_TAG: ${{ github.sha }}
+#      with:
+#        tag_name: v$IMAGE_TAG
+#        release_name: Release v$IMAGE_TAG
+#        body: |
+#          ${{ steps.build-init.outputs.git-commit-msg }}
+#        draft: false
+#        prerelease: false
