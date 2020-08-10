@@ -3,6 +3,7 @@ from .models import Cafe, Location
 from rest_framework import viewsets
 from rest_framework.response import Response
 from nomad.serializers import UserSerializer, CafeSerializer
+from nomad.utils import getListByDistance
 # from django.shortcuts import render
 
 
@@ -23,32 +24,20 @@ class CafeViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         queryset = self.queryset
+
         address = self.request.query_params.get('address', None)
+        lat = self.request.query_params.get('lat', None)
+        lon = self.request.query_params.get('lon', None)
         _id = self.request.query_params.get('id', None)
+        print(lat, lon)
         if _id is not None:
             queryset = queryset.filter(_id=_id)
         if address is not None:
-            query_result = Cafe.objects.mongo_aggregate(
-                [
-                    {
-                        "$geoNear": {
-                            "near": {
-                                "type": "Point",
-                                "coordinates": [126.95641372307917, 37.48247619555855]
-                            },
-                            # "spherical": "true",
-                            "key": "location",
-                            "maxDistance": 5000,
-                            "distanceField": "dist.calculated",
-                            "query": {
-                                "road_addr": {"$regex": '^서울'}
-                            }
-                        }
-                    },
-                    {"$limit": 5}
-                ]
-            )
+            pass
+        if all(pos is not None for pos in [lat, lon]):
+            query_result = Cafe.objects.mongo_aggregate(getListByDistance(lat, lon))
             cafe_object = []
+
             for query_object in query_result:
                 location_data = query_object.pop('location')
                 dist_data = query_object.pop('dist')
@@ -56,5 +45,6 @@ class CafeViewSet(viewsets.ReadOnlyModelViewSet):
                 # result.location.add(Location(**location_data), bulk=False)
                 cafe_object.append(result)
             
-            return cafe_object
+            queryset = cafe_object
+
         return queryset
