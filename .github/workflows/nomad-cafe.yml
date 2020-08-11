@@ -46,7 +46,7 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
-        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$VERSION"
         echo "::set-output name=version::$VERSION"
         echo "::set-output name=git-commit-msg::$GIT_COMMIT_MSG"
     - name: nomad cafe nginx to Amazon ECR
@@ -62,6 +62,36 @@ jobs:
         docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION $ECR_REGISTRY/$ECR_REPOSITORY:latest
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$VERSION"
+
+    - name: Download task definition
+      run: |
+        aws ecs describe-task-definition --task-definition nomad-cafe --query taskDefinition > task-definition.json
+
+    - name: update nginx task definition
+      id: task-def-nginx
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      with:
+        task-definition: task-definition.json
+        container-name: nomad-cafe-nginx
+        image: ${{ steps.build-nginx-image.outputs.image }}
+
+    - name: update web task definition
+      id: task-def-web
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      with:
+        task-definition: task-definition.json
+        container-name: nomad-cafe
+        image: ${{ steps.build-web-image.outputs.image }}
+
+    - name: Deploy Amazon ECS task definition
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      with:
+        task-definition: ${{ steps.task-def-web.outputs.task-definition }}
+        service: nomad-cafe
+        cluster: nomad-cafe
+        wait-for-service-stability: true
+
     - name: Create Release
       id: create-release
       uses: actions/create-release@v1
