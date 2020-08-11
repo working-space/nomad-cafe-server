@@ -58,7 +58,7 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE
 
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION -f Dockerfile_with_apm .
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION -f Dockerfile_nginx .
         docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION $ECR_REGISTRY/$ECR_REPOSITORY:latest
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
@@ -84,10 +84,18 @@ jobs:
         container-name: nomad-cafe
         image: ${{ steps.build-web-image.outputs.image }}
 
-    - name: Deploy Amazon ECS task definition
+    - name: Deploy Amazon ECS web task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
         task-definition: ${{ steps.task-def-web.outputs.task-definition }}
+        service: nomad-cafe
+        cluster: nomad-cafe
+        wait-for-service-stability: true
+
+    - name: Deploy Amazon ECS nginx task definition
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      with:
+        task-definition: ${{ steps.task-def-nginx.outputs.task-definition }}
         service: nomad-cafe
         cluster: nomad-cafe
         wait-for-service-stability: true
