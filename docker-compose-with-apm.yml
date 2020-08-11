@@ -9,7 +9,7 @@ services:
             - ./config/nginx:/etc/nginx/conf.d
         depends_on:
             - web
-    nomad-cafe:
+    web:
         image: 992189553983.dkr.ecr.ap-northeast-2.amazonaws.com/nomad-cafe:latest
         environment:
             - NEW_RELIC_LICENSE_KEY=${NEW_RELIC_LICENSE_KEY}

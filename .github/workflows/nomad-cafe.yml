@@ -24,8 +24,8 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Build, tag, and push image to Amazon ECR
-      id: build-image
+    - name: nomad cafe web to Amazon ECR
+      id: build-web-image
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: nomad-cafe
@@ -34,6 +34,11 @@ jobs:
         GIT_HASH=$(git rev-parse --short "$GITHUB_SHA")
         VERSION=`cat ./version.txt`
         GIT_COMMIT_MSG=`git show -s`
+        BRANCH=${GITHUB_REF#refs/heads/}
+
+        if [ "${BRANCH}" != "master" ]; then
+        	VERSION=$VERSION-$GIT_HASH
+        fi
 
         # web
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION -f Dockerfile_with_apm .
@@ -41,18 +46,26 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
-        # nginx
-        docker build -t $ECR_REGISTRY/nomad-cafe-nginx:$VERSION -f Dockerfile_nginx .
-        docker tag $ECR_REGISTRY/nomad-cafe-nginx:$VERSION $ECR_REGISTRY/nomad-cafe-nginx:latest
-        docker push $ECR_REGISTRY/nomad-cafe-nginx:$VERSION
-        docker push $ECR_REGISTRY/nomad-cafe-nginx:latest
-
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-        echo "::set-output name=version::$VERSION-$GIT_HASH"
+        echo "::set-output name=version::$VERSION"
         echo "::set-output name=git-commit-msg::$GIT_COMMIT_MSG"
+    - name: nomad cafe nginx to Amazon ECR
+      id: build-nginx-image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: nomad-cafe-nginx
+        VERSION: ${{ steps.build-image.outputs.version }}
+      run: |
+        cd $GITHUB_WORKSPACE
+
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION -f Dockerfile_with_apm .
+        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION $ECR_REGISTRY/$ECR_REPOSITORY:latest
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
     - name: Create Release
       id: create-release
       uses: actions/create-release@v1
+      if: github.ref == 'refs/heads/master'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
