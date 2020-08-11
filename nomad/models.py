@@ -32,6 +32,7 @@ class Cafe(mongo_models.Model):
 
     objects = mongo_models.DjongoManager()
 
+
     class Meta:
         app_label = 'MongoDB'
         db_table = 'cafe'

@@ -3,4 +3,6 @@ psycopg2
 gunicorn
 djangorestframework
 djongo
+django-filter
 dnspython
+pymongo
