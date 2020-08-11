@@ -1,4 +1,4 @@
 FROM nginx
 
 ADD . /wwwroot/
-COPY ./config/nginx /etc/nginx/conf.d
+COPY ./config/nginx/nginx_on_ecs.conf /etc/nginx/conf.d/nginx.conf
