@@ -54,7 +54,7 @@ jobs:
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: nomad-cafe-nginx
-        VERSION: ${{ steps.build-image.outputs.version }}
+        VERSION: ${{ steps.build-web-image.outputs.version }}
       run: |
         cd $GITHUB_WORKSPACE
 
@@ -69,9 +69,9 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ steps.build-image.outputs.version }}
-        release_name: Release ${{ steps.build-image.outputs.version }}
+        tag_name: ${{ steps.build-web-image.outputs.version }}
+        release_name: Release ${{ steps.build-web-image.outputs.version }}
         body: |
-          ${{ steps.build-image.outputs.git-commit-msg }}
+          ${{ steps.build-web-image.outputs.git-commit-msg }}
         draft: false
         prerelease: false
