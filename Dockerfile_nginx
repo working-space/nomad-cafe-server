@@ -1,0 +1,4 @@
+FROM nginx
+
+ADD . /wwwroot/
+COPY ./config/nginx /etc/nginx/conf.d
