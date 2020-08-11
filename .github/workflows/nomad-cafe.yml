@@ -65,14 +65,17 @@ jobs:
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$VERSION"
 
     - name: Download task definition
+      id: download-task-def
       run: |
+        cd $GITHUB_WORKSPACE
         aws ecs describe-task-definition --task-definition nomad-cafe --query taskDefinition > task-definition.json
+        echo "::set-output name=task-def-file-path::$GITHUB_WORKSPACE/task-definition.json"
 
     - name: update nginx task definition
       id: task-def-nginx
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
-        task-definition: task-definition.json
+        task-definition: ${{ steps.download-task-def.outputs.task-def-file-path }}
         container-name: nomad-cafe-nginx
         image: ${{ steps.build-nginx-image.outputs.image }}
 
