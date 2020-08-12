@@ -24,28 +24,87 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Build, tag, and push image to Amazon ECR
-      id: build-image
+    - name: nomad cafe web to Amazon ECR
+      id: build-web-image
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: nomad-cafe
-        IMAGE_TAG: ${{ github.sha }}
       run: |
         cd $GITHUB_WORKSPACE
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f Dockerfile_with_apm .
-        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
+        GIT_HASH=$(git rev-parse --short "$GITHUB_SHA")
+        VERSION=`cat ./version.txt`
+        GIT_COMMIT_MSG=`git show -s`
+        BRANCH=${GITHUB_REF#refs/heads/}
+
+        if [ "${BRANCH}" != "master" ]; then
+        	VERSION=$VERSION-$GIT_HASH
+        fi
+
+        # web
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION -f Dockerfile_with_apm .
+        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION $ECR_REGISTRY/$ECR_REPOSITORY:latest
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
-        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-#    - name: Create Release
-#      id: create-release
-#      uses: actions/create-release@v1
-#      env:
-#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#        IMAGE_TAG: ${{ github.sha }}
-#      with:
-#        tag_name: v$IMAGE_TAG
-#        release_name: Release v$IMAGE_TAG
-#        body: |
-#          ${{ steps.build-init.outputs.git-commit-msg }}
-#        draft: false
-#        prerelease: false
+
+        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$VERSION"
+        echo "::set-output name=version::$VERSION"
+        echo "::set-output name=git-commit-msg::$GIT_COMMIT_MSG"
+    - name: nomad cafe nginx to Amazon ECR
+      id: build-nginx-image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: nomad-cafe-nginx
+        VERSION: ${{ steps.build-web-image.outputs.version }}
+      run: |
+        cd $GITHUB_WORKSPACE
+
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION -f Dockerfile_nginx .
+        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION $ECR_REGISTRY/$ECR_REPOSITORY:latest
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$VERSION"
+
+    - name: Download task definition
+      id: download-task-def
+      run: |
+        cd $GITHUB_WORKSPACE
+        aws ecs describe-task-definition --task-definition nomad-cafe --query taskDefinition > task-definition.json
+        echo "::set-output name=task-def-file-path::$GITHUB_WORKSPACE/task-definition.json"
+
+    - name: update nginx task definition
+      id: task-def-nginx
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      with:
+        task-definition: ${{ steps.download-task-def.outputs.task-def-file-path }}
+        container-name: nomad-cafe-nginx
+        image: ${{ steps.build-nginx-image.outputs.image }}
+
+    - name: update web task definition
+      id: task-def-web
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      with:
+        task-definition: ${{ steps.task-def-nginx.outputs.task-definition }}
+        container-name: nomad-cafe
+        image: ${{ steps.build-web-image.outputs.image }}
+
+    - name: Deploy Amazon ECS task definition
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      with:
+        task-definition: ${{ steps.task-def-web.outputs.task-definition }}
+        service: nomad-cafe
+        cluster: nomad-cafe
+        wait-for-service-stability: true
+
+    - name: Create Release
+      id: create-release
+      uses: actions/create-release@v1
+      if: github.ref == 'refs/heads/master'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.build-web-image.outputs.version }}
+        release_name: Release ${{ steps.build-web-image.outputs.version }}
+        body: |
+          ${{ steps.build-web-image.outputs.git-commit-msg }}
+        draft: false
+        prerelease: false
