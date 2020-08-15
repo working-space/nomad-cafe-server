@@ -1,0 +1,22 @@
+version : '3.5'
+services:
+    nginx:
+        image: nginx:latest
+        ports:
+            - "80:80"
+        volumes:
+            - .:/wwwroot
+            - ./config/nginx:/etc/nginx/conf.d
+        depends_on:
+            - web
+    web:
+        image: 992189553983.dkr.ecr.ap-northeast-2.amazonaws.com/nomad-cafe:latest
+        environment:
+            - NEW_RELIC_LICENSE_KEY=${NEW_RELIC_LICENSE_KEY}
+            - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+            - DJANGO_DEBUG=${DJANGO_DEBUG}
+            - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
+            - DB_NAME=${DB_NAME}
+            - DB_HOST=${DB_HOST}
+        expose:
+            - "8000"

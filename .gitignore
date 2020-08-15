@@ -5,3 +5,6 @@ static_root/
 *.sqlite3
 *.pyc
 .secret
+
+# Jetbrain
+.idea
