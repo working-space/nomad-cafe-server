@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.db.models import F
 from .models import Cafe, Location
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -29,7 +30,7 @@ class CafeViewSet(viewsets.ReadOnlyModelViewSet):
         lat = self.request.query_params.get('lat', None)
         lon = self.request.query_params.get('lon', None)
         _id = self.request.query_params.get('id', None)
-        print(lat, lon)
+
         if _id is not None:
             queryset = queryset.filter(_id=_id)
         if address is not None:
@@ -39,10 +40,11 @@ class CafeViewSet(viewsets.ReadOnlyModelViewSet):
             cafe_object = []
 
             for query_object in query_result:
-                location_data = query_object.pop('location')
                 dist_data = query_object.pop('dist')
+
                 result = Cafe(**query_object)
-                # result.location.add(Location(**location_data), bulk=False)
+                # TODO: dist 처리 필요
+                # result.objects.annotate(related_value=F('related_object__value'))
                 cafe_object.append(result)
             
             queryset = cafe_object
