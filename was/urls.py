@@ -22,9 +22,12 @@ from nomad import views
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
 router.register(r'cafes', views.CafeViewSet)
+router.register(r'admin-users', views.AdminViewSet)
+router.register(r'tags', views.TagViewSet)
+router.register(r'ratings', views.RatingViewSet)
 
 urlpatterns = [
-    path('api/v1/', include(router.urls)),
+    path(r'api/v1/', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('admin/', admin.site.urls),
 

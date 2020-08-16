@@ -1,19 +1,61 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User as Admin
 from django.db.models import F
-from .models import Cafe, Location
+from .models import Cafe, Location, User, Rating, Tag
 from rest_framework import viewsets
 from rest_framework.response import Response
-from nomad.serializers import UserSerializer, CafeSerializer
+from nomad.serializers import UserSerializer, CafeSerializer, RatingSerializer, AdminSerializer, TagSerializer
 from nomad.utils import getListByDistance
 # from django.shortcuts import render
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class AdminViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    queryset = User.objects.all().order_by('-date_joined')
+    queryset = Admin.objects.all().order_by('-date_joined')
+    serializer_class = AdminSerializer
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
     serializer_class = UserSerializer
+
+    # @action(detail=True, methods=['post'])
+    # def set_annonymous_user(self, request, pk=None):
+    #     user = self.get_object()
+    #     serializer = UserSerializer(data=request.data)
+    #     if serializer.is_valid():
+    #         user.set_password(serializer.data['password'])
+    #         user.save()
+    #         return Response({'status': 'test set'})
+    #     else:
+    #         return Response(serializer.errors,
+    #                         status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class RatingViewSet(viewsets.ModelViewSet):
+    queryset = Rating.objects.all()
+    serializer_class = RatingSerializer
+
+
+class TagViewSet(viewsets.ModelViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+
+    # def update(self, request, *args, **kwargs):
+    #     instance = self.get_object()
+    #     # serializer = self.get_serializer(data=request.data,many=isinstance(request.data, list), partial=True)
+    #     serializer = self.get_serializer(instance, data=request.data)
+    #     serializer.is_valid(raise_exception=True)
+
+    #     if request.user.has_perm('change_monitor', instance):
+    #         instance = serializer.save()
+    #         self.perform_update(instance)
+    #         headers = self.get_success_headers(serializer.validated_data)
+    #         return Response(serializer.data, status=status.HTTP_206_PARTIAL_CONTENT, headers=headers)
+    #     else:
+    #         return HttpResponseForbidden('Somehow, you aren\'t authorized to update')
 
 
 class CafeViewSet(viewsets.ReadOnlyModelViewSet):
