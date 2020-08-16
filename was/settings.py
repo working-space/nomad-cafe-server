@@ -25,8 +25,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'unsafe-secret-key')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', "True") == "True"
 
-# ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split()
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split()
 
 
 # Application definition
@@ -92,7 +91,7 @@ DATABASES = {
         'NAME': os.environ.get('DB_NAME', 'nomad-cafe'),
         'ENFORCE_SCHEMA': False,
         'CLIENT': {
-            'host': ''
+            'host': os.environ.get('DB_HOST', None),
         }
     }
 }
