@@ -63,4 +63,8 @@ class CafeSerializer(serializers.HyperlinkedModelSerializer):
             'homepage',
             'img',
             'tags',
+            'region_1depth_name',
+            'region_1depth_name',
+            'region_1depth_name',
+            'road_name',
         ]

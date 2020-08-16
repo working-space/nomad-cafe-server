@@ -1,7 +1,5 @@
 from django.db import models
 from djongo import models as mongo_models
-from django.contrib.postgres.fields import JSONField
-from django.contrib.postgres.fields import ArrayField
 
 class Tag(mongo_models.Model):
     id = mongo_models.CharField(db_column='_id', max_length=512, primary_key=True)
@@ -30,7 +28,7 @@ class Rating(mongo_models.Model):
     id = mongo_models.CharField(db_column='_id', max_length=512, primary_key=True)
     cafe_id = mongo_models.CharField(max_length=512)
     user_id = mongo_models.CharField(max_length=512)
-    tags = ArrayField(mongo_models.CharField(max_length=512))
+    tags = mongo_models.JSONField()
     create_dt = mongo_models.DateTimeField()
     update_dt = mongo_models.DateTimeField()
 
@@ -42,7 +40,7 @@ class Rating(mongo_models.Model):
 
 class Location(mongo_models.Model):
     type = mongo_models.CharField(max_length=128)
-    coordinates = ArrayField(mongo_models.DecimalField())
+    coordinates = mongo_models.JSONField()
 
 
     class Meta:
@@ -73,7 +71,11 @@ class Cafe(mongo_models.Model):
     road_addr = mongo_models.CharField(max_length=512)
     homepage = mongo_models.CharField(max_length=512)
     img = mongo_models.CharField(max_length=512)
-    tags = ArrayField(JSONField())
+    tags = mongo_models.JSONField()
+    region_1depth_name = mongo_models.CharField(max_length=512)
+    region_1depth_name = mongo_models.CharField(max_length=512)
+    region_1depth_name = mongo_models.CharField(max_length=512)
+    road_name = mongo_models.CharField(max_length=512)
 
     objects = mongo_models.DjongoManager()
 
