@@ -20,7 +20,7 @@ from nomad import views
 
 
 router = routers.DefaultRouter()
-router.register(r'users', views.UserViewSet)
+router.register(r'members', views.MemberViewSet)
 router.register(r'cafes', views.CafeViewSet)
 router.register(r'admin-users', views.AdminViewSet)
 router.register(r'tags', views.TagViewSet)

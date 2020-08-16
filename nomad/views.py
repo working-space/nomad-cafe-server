@@ -1,9 +1,9 @@
 from django.contrib.auth.models import User as Admin
 from django.db.models import F
-from .models import Cafe, Location, User, Rating, Tag
+from .models import Cafe, Location, Member, Rating, Tag
 from rest_framework import viewsets
 from rest_framework.response import Response
-from nomad.serializers import UserSerializer, CafeSerializer, RatingSerializer, AdminSerializer, TagSerializer
+from nomad.serializers import MemberSerializer, CafeSerializer, RatingSerializer, AdminSerializer, TagSerializer
 from nomad.utils import getListByDistance
 # from django.shortcuts import render
 
@@ -16,9 +16,9 @@ class AdminViewSet(viewsets.ModelViewSet):
     serializer_class = AdminSerializer
 
 
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+class MemberViewSet(viewsets.ModelViewSet):
+    queryset = Member.objects.all()
+    serializer_class = MemberSerializer
 
     # @action(detail=True, methods=['post'])
     # def set_annonymous_user(self, request, pk=None):

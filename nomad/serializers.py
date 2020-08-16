@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User as Admin
-from .models import Cafe, User, Rating, Tag
+from .models import Cafe, Member, Rating, Tag
 from rest_framework import serializers
 
 
@@ -28,9 +28,9 @@ class AdminSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['url', 'username', 'email', 'groups']
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class MemberSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = User
+        model = Member
         fields = [
             'id',
             'name',

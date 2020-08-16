@@ -9,11 +9,11 @@ class Tag(mongo_models.Model):
 
 
     class Meta:
-        app_label = 'MongoDB'
+        app_label = 'default'
         db_table = 'tag'
 
 
-class User(mongo_models.Model):
+class Member(mongo_models.Model):
     id = mongo_models.CharField(db_column='_id', max_length=512, primary_key=True)
     # name : this key is made by IP and specified key(ex: browser cookie key...)
     name = mongo_models.CharField(max_length=512)
@@ -22,7 +22,7 @@ class User(mongo_models.Model):
 
 
     class Meta:
-        app_label = 'MongoDB'
+        app_label = 'default'
         db_table = 'user'
 
 
@@ -36,7 +36,7 @@ class Rating(mongo_models.Model):
 
 
     class Meta:
-        app_label = 'MongoDB'
+        app_label = 'default'
         db_table = 'rating'
 
 
@@ -79,5 +79,5 @@ class Cafe(mongo_models.Model):
 
 
     class Meta:
-        app_label = 'MongoDB'
+        app_label = 'default'
         db_table = 'cafe'
