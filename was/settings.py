@@ -55,6 +55,7 @@ ROOT_URLCONF = 'was.urls'
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     'PAGE_SIZE': 10
 }
 
@@ -81,11 +82,11 @@ WSGI_APPLICATION = 'was.wsgi.application'
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
+    'local': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     },
-    'MongoDB': {
+    'default': {
         'ENGINE': 'djongo',
         'NAME': os.environ.get('DB_NAME', 'nomad-cafe'),
         'ENFORCE_SCHEMA': False,

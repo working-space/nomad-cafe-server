@@ -1,29 +1,51 @@
-from django.contrib.auth.models import User
-from .models import Cafe
+from django.contrib.auth.models import User as Admin
+from .models import Cafe, Member, Rating, Tag
 from rest_framework import serializers
 
 
-'''
-class UserSerializer(serializers.ModelSerializer):
-    url = serializers.CharField(source='url')
-    
-
+class RatingSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = User
-        fields = ['url']
-'''
+        model = Rating
+        fields = [
+            'id',
+            'cafe_id',
+            'user_id',
+            'tags',
+            'create_dt',
+            'update_dt',
+        ]
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+
+class TagSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = User
+        model = Tag
+        fields = ['id', 'name']
+
+
+class AdminSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Admin
         fields = ['url', 'username', 'email', 'groups']
+
+
+class MemberSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Member
+        fields = [
+            'id',
+            'name',
+            'create_dt',
+            'update_dt',
+        ]
 
 
 class CafeSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Cafe
         fields = [
-            '_id',
+            'id',
+            'data_id',
+            'data_type',
             'create_dt',
             'update_dt',
             'data_id',
@@ -31,7 +53,14 @@ class CafeSerializer(serializers.HyperlinkedModelSerializer):
             'end_hours',
             'location',
             'name',
+            'brand_name',
+            'x',
+            'y',
             'parcel_addr',
+            'zipcode',
             'phone',
             'road_addr',
+            'homepage',
+            'img',
+            'tags',
         ]
