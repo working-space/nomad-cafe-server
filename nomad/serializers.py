@@ -14,13 +14,14 @@ class RatingSerializer(serializers.HyperlinkedModelSerializer):
             'points',
             'create_dt',
             'update_dt',
+            'url', 
         ]
 
 
 class TagSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Tag
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'url', ]
 
 
 class AdminSerializer(serializers.HyperlinkedModelSerializer):
@@ -37,6 +38,7 @@ class MemberSerializer(serializers.HyperlinkedModelSerializer):
             'name',
             'create_dt',
             'update_dt',
+            'url', 
         ]
 
 
@@ -68,4 +70,5 @@ class CafeSerializer(serializers.HyperlinkedModelSerializer):
             'region_2depth_name',
             'region_3depth_name',
             'road_name',
+            'url', 
         ]
