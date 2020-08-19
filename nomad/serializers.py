@@ -11,6 +11,7 @@ class RatingSerializer(serializers.HyperlinkedModelSerializer):
             'cafe_id',
             'user_id',
             'tags',
+            'points',
             'create_dt',
             'update_dt',
         ]
@@ -64,7 +65,7 @@ class CafeSerializer(serializers.HyperlinkedModelSerializer):
             'img',
             'tags',
             'region_1depth_name',
-            'region_1depth_name',
-            'region_1depth_name',
+            'region_2depth_name',
+            'region_3depth_name',
             'road_name',
         ]
