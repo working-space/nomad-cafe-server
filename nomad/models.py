@@ -29,6 +29,7 @@ class Rating(mongo_models.Model):
     cafe_id = mongo_models.CharField(max_length=512)
     user_id = mongo_models.CharField(max_length=512)
     tags = mongo_models.JSONField()
+    points = mongo_models.DecimalField(max_digits=5, decimal_places=3)
     create_dt = mongo_models.DateTimeField()
     update_dt = mongo_models.DateTimeField()
 
@@ -73,8 +74,8 @@ class Cafe(mongo_models.Model):
     img = mongo_models.CharField(max_length=512)
     tags = mongo_models.JSONField()
     region_1depth_name = mongo_models.CharField(max_length=512)
-    region_1depth_name = mongo_models.CharField(max_length=512)
-    region_1depth_name = mongo_models.CharField(max_length=512)
+    region_2depth_name = mongo_models.CharField(max_length=512)
+    region_3depth_name = mongo_models.CharField(max_length=512)
     road_name = mongo_models.CharField(max_length=512)
 
     objects = mongo_models.DjongoManager()
