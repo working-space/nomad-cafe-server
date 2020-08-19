@@ -6,3 +6,4 @@ djongo
 django-filter
 dnspython
 pymongo
+django-cors-headers
