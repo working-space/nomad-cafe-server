@@ -77,6 +77,7 @@ class Cafe(mongo_models.Model):
     region_2depth_name = mongo_models.CharField(max_length=512)
     region_3depth_name = mongo_models.CharField(max_length=512)
     road_name = mongo_models.CharField(max_length=512)
+    dist = mongo_models.JSONField()
 
     objects = mongo_models.DjongoManager()
 
