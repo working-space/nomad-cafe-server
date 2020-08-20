@@ -15,6 +15,6 @@ def getListByDistance(lat, lon):
                         }
                     }
                 },
-                {"$limit": 5}
+                {"$limit": 5000}
             ]
     return query
