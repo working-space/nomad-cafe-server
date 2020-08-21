@@ -152,6 +152,20 @@ services:
 
 [CORS 설정](https://blog.thereis.xyz/41)
 
+[Django Rest Framework에서 Result JSON이 OrderedDict로 출력될 때](https://stackoverflow.com/questions/28722297/drf-testing-instead-of-json-an-ordereddict-is-returned)
+
+```python
+class ConfigSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Config
+        fields = ('id', 'url', 'email', "result",)
+        
+# COPY NEXT 3 LINES AND CHANGE 'result' WITH THE JSON MEMBER THAT CAUSE THE PROBLEM
+    result = serializers.SerializerMethodField()
+    def get_result(self, obj):
+        return obj.result
+```
+
 ##### 기타
 
 [Github action 정리](https://zzsza.github.io/development/2020/06/06/github-action/)

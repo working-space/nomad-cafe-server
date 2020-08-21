@@ -17,6 +17,10 @@ class RatingSerializer(serializers.HyperlinkedModelSerializer):
             'url',
         ]
 
+    tags = serializers.SerializerMethodField()
+    def get_tags(self, obj):
+        return obj.tags
+
 
 class TagSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -73,3 +77,12 @@ class CafeSerializer(serializers.HyperlinkedModelSerializer):
             'url',
             'dist'
         ]
+
+    dist = serializers.SerializerMethodField()
+    def get_dist(self, obj):
+        return obj.dist
+
+    
+    location = serializers.SerializerMethodField()
+    def get_location(self, obj):
+        return obj.location

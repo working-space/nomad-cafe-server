@@ -7,7 +7,7 @@ class Tag(mongo_models.Model):
 
 
     class Meta:
-        app_label = 'default'
+        # app_label = 'default'
         db_table = 'tag'
 
 
@@ -15,12 +15,12 @@ class Member(mongo_models.Model):
     id = mongo_models.CharField(db_column='_id', max_length=512, primary_key=True)
     # name : this key is made by IP and specified key(ex: browser cookie key...)
     name = mongo_models.CharField(max_length=512)
-    create_dt = mongo_models.DateTimeField()
-    update_dt = mongo_models.DateTimeField()
+    create_dt = mongo_models.DateTimeField(auto_now_add=True)
+    update_dt = mongo_models.DateTimeField(auto_now=True)
 
 
     class Meta:
-        app_label = 'default'
+        # app_label = 'default'
         db_table = 'user'
 
 
@@ -28,20 +28,20 @@ class Rating(mongo_models.Model):
     id = mongo_models.CharField(db_column='_id', max_length=512, primary_key=True)
     cafe_id = mongo_models.CharField(max_length=512)
     user_id = mongo_models.CharField(max_length=512)
-    tags = mongo_models.JSONField()
+    tags = mongo_models.CharField(max_length=512)
     points = mongo_models.DecimalField(max_digits=5, decimal_places=3)
-    create_dt = mongo_models.DateTimeField()
-    update_dt = mongo_models.DateTimeField()
+    create_dt = mongo_models.DateTimeField(auto_now_add=True)
+    update_dt = mongo_models.DateTimeField(auto_now=True)
 
 
     class Meta:
-        app_label = 'default'
+        # app_label = 'default'
         db_table = 'rating'
 
 
 class Location(mongo_models.Model):
     type = mongo_models.CharField(max_length=128)
-    coordinates = mongo_models.JSONField()
+    coordinates = mongo_models.CharField(max_length=512)
 
 
     class Meta:
@@ -52,16 +52,17 @@ class Cafe(mongo_models.Model):
     id = mongo_models.CharField(db_column='_id', max_length=512, primary_key=True)
     data_id = mongo_models.CharField(max_length=512)
     data_type = mongo_models.CharField(max_length=512)
-    create_dt = mongo_models.DateTimeField()
-    update_dt = mongo_models.DateTimeField()
+    create_dt = mongo_models.DateTimeField(auto_now_add=True)
+    update_dt = mongo_models.DateTimeField(auto_now=True)
     data_id = mongo_models.IntegerField()
     start_hours = mongo_models.CharField(max_length=512)
     end_hours = mongo_models.CharField(max_length=512)
-    location = mongo_models.EmbeddedField(
-        model_container=Location,
-        null=True,
-        blank=True
-    )
+    # location = mongo_models.EmbeddedField(
+    #     model_container=Location,
+    #     null=True,
+    #     blank=True
+    # )
+    location = mongo_models.CharField(max_length=512)
     name = mongo_models.CharField(max_length=512)
     brand_name = mongo_models.CharField(max_length=512)
     x = mongo_models.CharField(max_length=64)
@@ -72,16 +73,16 @@ class Cafe(mongo_models.Model):
     road_addr = mongo_models.CharField(max_length=512)
     homepage = mongo_models.CharField(max_length=512)
     img = mongo_models.CharField(max_length=512)
-    tags = mongo_models.JSONField()
+    tags = mongo_models.CharField(max_length=512)
     region_1depth_name = mongo_models.CharField(max_length=512)
     region_2depth_name = mongo_models.CharField(max_length=512)
     region_3depth_name = mongo_models.CharField(max_length=512)
     road_name = mongo_models.CharField(max_length=512)
-    dist = mongo_models.JSONField()
+    dist = mongo_models.CharField(max_length=512)
 
     objects = mongo_models.DjongoManager()
 
 
     class Meta:
-        app_label = 'default'
+        # app_label = 'default'
         db_table = 'cafe'
