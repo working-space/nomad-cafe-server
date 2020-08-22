@@ -9,9 +9,6 @@ from nomad.utils import getListByDistance
 
 
 class AdminViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows users to be viewed or edited.
-    """
     queryset = Admin.objects.all().order_by('-date_joined')
     serializer_class = AdminSerializer
 
@@ -30,37 +27,24 @@ class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
 
-    # def update(self, request, *args, **kwargs):
-    #     instance = self.get_object()
-    #     # serializer = self.get_serializer(data=request.data,many=isinstance(request.data, list), partial=True)
-    #     serializer = self.get_serializer(instance, data=request.data)
-    #     serializer.is_valid(raise_exception=True)
-
-    #     if request.user.has_perm('change_monitor', instance):
-    #         instance = serializer.save()
-    #         self.perform_update(instance)
-    #         headers = self.get_success_headers(serializer.validated_data)
-    #         return Response(serializer.data, status=status.HTTP_206_PARTIAL_CONTENT, headers=headers)
-    #     else:
-    #         return HttpResponseForbidden('Somehow, you aren\'t authorized to update')
-
 
 class CafeViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Cafe.objects.all() 
     serializer_class = CafeSerializer
-    
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
     def get_queryset(self):
         queryset = self.queryset
 
         address = self.request.query_params.get('address', None)
         lat = self.request.query_params.get('lat', None)
         lon = self.request.query_params.get('lon', None)
-        id = self.request.query_params.get('id', None)
 
-        if id is not None:
-            queryset = queryset.filter(id=id)
         if address is not None:
             pass
+
         if all(pos is not None for pos in [lat, lon]):
             query_result = Cafe.objects.mongo_aggregate(getListByDistance(lat, lon))
             cafe_object = []
