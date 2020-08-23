@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User as Admin
 from .models import Cafe, Member, Rating, Tag
 from rest_framework import serializers
+from nomad.utils import JSONObjectWriteAndReadField
 
 
 class RatingSerializer(serializers.HyperlinkedModelSerializer):
@@ -16,10 +17,8 @@ class RatingSerializer(serializers.HyperlinkedModelSerializer):
             'update_dt',
             'url',
         ]
+    tags = JSONObjectWriteAndReadField()
 
-    tags = serializers.SerializerMethodField()
-    def get_tags(self, obj):
-        return obj.tags
 
 
 class TagSerializer(serializers.HyperlinkedModelSerializer):
@@ -78,16 +77,6 @@ class CafeSerializer(serializers.HyperlinkedModelSerializer):
             'dist'
         ]
 
-    dist = serializers.SerializerMethodField()
-    def get_dist(self, obj):
-        return obj.dist
-
-    
-    location = serializers.SerializerMethodField()
-    def get_location(self, obj):
-        return obj.location
-
-
-    tags = serializers.SerializerMethodField()
-    def get_tags(self, obj):
-        return obj.tags
+    dist = JSONObjectWriteAndReadField()
+    location = JSONObjectWriteAndReadField()
+    tags = JSONObjectWriteAndReadField()

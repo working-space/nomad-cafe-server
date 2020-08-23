@@ -1,3 +1,18 @@
+from rest_framework import serializers
+import json
+
+class JSONObjectWriteAndReadField(serializers.Field):
+
+    def to_representation(self, obj):
+        return obj
+
+    def to_internal_value(self, data):
+        if isinstance(data, str):
+            data = json.loads(data.replace("'", '"'))
+            
+        return data
+
+
 def getListByDistance(lat, lon):
     query = [
                 {
