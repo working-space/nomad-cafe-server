@@ -9,17 +9,28 @@ class JSONObjectWriteAndReadField(serializers.Field):
     def to_internal_value(self, data):
         if isinstance(data, str):
             data = json.loads(data.replace("'", '"'))
-            
+
         return data
 
 
-def getListByDistance(lat, lon):
+def getListOfTags(id):
+    query = [
+                {
+                    "$match": {
+                        "cafe_id": id
+                    }
+                }
+            ]
+    return query
+
+
+def getListByDistance(lon, lat):
     query = [
                 {
                     "$geoNear": {
                         "near": {
                             "type": "Point",
-                            "coordinates": [float(lat), float(lon)]
+                            "coordinates": [float(lon), float(lat)]
                         },
                         # "spherical": "true",
                         "key": "location",

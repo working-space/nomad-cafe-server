@@ -35,14 +35,14 @@ class CafeViewSet(viewsets.ReadOnlyModelViewSet):
         queryset = self.queryset
 
         address = self.request.query_params.get('address', None)
-        lat = self.request.query_params.get('lat', None)
         lon = self.request.query_params.get('lon', None)
+        lat = self.request.query_params.get('lat', None)
 
         if address is not None:
             pass
 
-        if all(pos is not None for pos in [lat, lon]):
-            query_result = Cafe.objects.mongo_aggregate(getListByDistance(lat, lon))
+        if all(pos is not None for pos in [lon, lat]):
+            query_result = Cafe.objects.mongo_aggregate(getListByDistance(lon, lat))
             cafe_object = []
 
             for query_object in query_result:
