@@ -88,6 +88,6 @@ class CafeSerializer(serializers.HyperlinkedModelSerializer):
         return obj.location
 
 
-    tag = serializers.SerializerMethodField()
-    def get_tag(self, obj):
-        return obj.tag
+    tags = serializers.SerializerMethodField()
+    def get_tags(self, obj):
+        return obj.tags
