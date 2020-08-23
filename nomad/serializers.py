@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User as Admin
 from .models import Cafe, Member, Rating, Tag
 from rest_framework import serializers
-from nomad.utils import JSONObjectWriteAndReadField, getListOfTags
+from nomad.utils import JSONObjectWriteAndReadField, getCountOfTags, getAvgOfPoints
 from collections import Counter
 
 
@@ -81,28 +81,31 @@ class CafeSerializer(serializers.HyperlinkedModelSerializer):
 
     dist = JSONObjectWriteAndReadField()
     location = JSONObjectWriteAndReadField()
-    
+
     tags = serializers.SerializerMethodField()
     def get_tags(self, obj):
-        query_result = Rating.objects.mongo_aggregate(getListOfTags(obj.id))
-        tags_cnt = {}
-        
-        for query_object in query_result:
-            tag_groups = query_object['tags']
-            for tag in tag_groups:
-                if tags_cnt.get(tag):
-                    tags_cnt[tag] += 1
-                else:
-                    tags_cnt[tag] = 1
+        query_result = list(Rating.objects.mongo_aggregate(getCountOfTags(obj.id)))
 
-        return tags_cnt
+        tags = []
+        if query_result:
+            for tag in query_result[0]['tags']:
+                tag = dict(tag)
+                tag['name'] = Tag.objects.get(id=tag['id']).name
+                tags.append(tag)
+
+        return tags
 
 
     points = serializers.SerializerMethodField()
     def get_points(self, obj):
-        query_result = Rating.objects.mongo_aggregate(getListOfTags(obj.id))
+        # query_result = Rating.objects.filter(cafe_id=obj.id)
+        query_result = list(Rating.objects.mongo_aggregate(getAvgOfPoints(obj.id)))
         points_total = 0
         points_cnt = 0
+
+        # for query_object in query_result:
+        #     points_total += float(query_object.points)
+        #     points_cnt += 1
 
         for query_object in query_result:
             points_total += float(query_object['points'])

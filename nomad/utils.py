@@ -13,13 +13,24 @@ class JSONObjectWriteAndReadField(serializers.Field):
         return data
 
 
-def getListOfTags(id):
+def getCountOfTags(id):
     query = [
-                {
-                    "$match": {
-                        "cafe_id": id
-                    }
-                }
+                {"$match":{"cafe_id":id}},
+                {"$unwind":"$tags"},
+                {"$group":{"_id":"$tags","count":{"$sum":1}}},
+                {"$group":{"_id":None,"tags":{"$push":{"id":"$_id",
+                                                            "count":"$count"}}}},
+                
+                {"$project":{"_id":0,"tags":1}}
+            ]
+    return query
+
+
+# TODO: Float 변환 부분 수정
+def getAvgOfPoints(id):
+    query = [
+                {"$match":{"cafe_id":id}},
+                # {"$group":{"_id":None,"pop":{"$avg":{'input': "$points", 'to': 'float'}}}}
             ]
     return query
 
