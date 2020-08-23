@@ -1,7 +1,8 @@
 from django.contrib.auth.models import User as Admin
 from .models import Cafe, Member, Rating, Tag
 from rest_framework import serializers
-from nomad.utils import JSONObjectWriteAndReadField
+from nomad.utils import JSONObjectWriteAndReadField, getListOfTags
+from collections import Counter
 
 
 class RatingSerializer(serializers.HyperlinkedModelSerializer):
@@ -74,9 +75,37 @@ class CafeSerializer(serializers.HyperlinkedModelSerializer):
             'region_3depth_name',
             'road_name',
             'url',
-            'dist'
+            'dist',
+            'points'
         ]
 
     dist = JSONObjectWriteAndReadField()
     location = JSONObjectWriteAndReadField()
-    tags = JSONObjectWriteAndReadField()
+    
+    tags = serializers.SerializerMethodField()
+    def get_tags(self, obj):
+        query_result = Rating.objects.mongo_aggregate(getListOfTags(obj.id))
+        tags_cnt = {}
+        
+        for query_object in query_result:
+            tag_groups = query_object['tags']
+            for tag in tag_groups:
+                if tags_cnt.get(tag):
+                    tags_cnt[tag] += 1
+                else:
+                    tags_cnt[tag] = 1
+
+        return tags_cnt
+
+
+    points = serializers.SerializerMethodField()
+    def get_points(self, obj):
+        query_result = Rating.objects.mongo_aggregate(getListOfTags(obj.id))
+        points_total = 0
+        points_cnt = 0
+
+        for query_object in query_result:
+            points_total += float(query_object['points'])
+            points_cnt += 1
+
+        return points_total / points_cnt if points_cnt > 0 else 0.0

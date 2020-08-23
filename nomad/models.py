@@ -33,6 +33,8 @@ class Rating(mongo_models.Model):
     create_dt = mongo_models.DateTimeField(auto_now_add=True)
     update_dt = mongo_models.DateTimeField(auto_now=True)
 
+    objects = mongo_models.DjongoManager()
+
 
     class Meta:
         # app_label = 'default'
