@@ -32,9 +32,6 @@ class CafeViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Cafe.objects.all() 
     serializer_class = CafeSerializer
 
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-
     def get_queryset(self):
         queryset = self.queryset
 
