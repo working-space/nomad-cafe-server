@@ -5,7 +5,6 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from nomad.serializers import MemberSerializer, CafeSerializer, RatingSerializer, AdminSerializer, TagSerializer
 from nomad.utils import getListByDistance
-# from django.shortcuts import render
 
 
 class AdminViewSet(viewsets.ModelViewSet):
