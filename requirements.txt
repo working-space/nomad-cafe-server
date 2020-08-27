@@ -8,4 +8,5 @@ dnspython==2.0.0
 pymongo==3.11.0
 django-cors-headers==3.4.0
 drf-yasg==1.17.1
+drf-yasg-examples==0.1.1
 sqlparse==0.2.4

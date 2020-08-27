@@ -18,6 +18,17 @@ class RatingSerializer(serializers.HyperlinkedModelSerializer):
             'update_dt',
             'url',
         ]
+        example = {
+            "id": "ratings-id-1",
+            "cafe_id": "cafe-id-1",
+            "user_id": "user-id-1",
+            "tags": [
+                "tag-id-1",
+                "tag-id-2",
+                "tag-id-3"
+            ],
+            "points": 3.4
+        }
     tags = JSONObjectWriteAndReadField()
 
 
