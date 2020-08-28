@@ -21,6 +21,18 @@ class RatingViewSet(viewsets.ModelViewSet):
     queryset = Rating.objects.all()
     serializer_class = RatingSerializer
 
+    def create(self, request, *args, **kwargs):
+        self._setRating()
+        return super().create(request, *args, **kwargs)
+    
+    def update(self, request, pk=None, *args, **kwargs):
+        self._setRating()
+        return super().update(request, pk, *args, **kwargs)
+
+    def partial_update(self, request, pk=None, *args, **kwargs):
+        self._setRating()
+        return super().partial_update(request, pk, *args, **kwargs)
+
 
 class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
@@ -31,9 +43,12 @@ class CafeViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Cafe.objects.all() 
     serializer_class = CafeSerializer
 
-    def retrieve(self, request, pk=None):
+    def retrieve(self, request, pk=None, *args, **kwargs):
         lon = request.query_params.get('lon', None)
         lat = request.query_params.get('lat', None)
+
+        if lon is None or lat is None:
+            return super().retrieve(request, *args, **kwargs)
 
         instance = self._getDistanceByPosition(lon, lat, pk)
 
@@ -42,7 +57,7 @@ class CafeViewSet(viewsets.ReadOnlyModelViewSet):
 
             return Response(serializer.data)
         else:
-             return Response({"detail": "Not found."})
+            return Response({"detail": "Not found."})
 
     def get_queryset(self):
         queryset = self.queryset
@@ -80,3 +95,6 @@ class CafeViewSet(viewsets.ReadOnlyModelViewSet):
             queryset = cafe_object
 
         return queryset
+
+    def _setRating(self):
+        pass

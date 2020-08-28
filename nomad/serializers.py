@@ -109,14 +109,9 @@ class CafeSerializer(serializers.HyperlinkedModelSerializer):
 
     points = serializers.SerializerMethodField()
     def get_points(self, obj):
-        # query_result = Rating.objects.filter(cafe_id=obj.id)
         query_result = list(Rating.objects.mongo_aggregate(getAvgOfPoints(obj.id)))
         points_total = 0
         points_cnt = 0
-
-        # for query_object in query_result:
-        #     points_total += float(query_object.points)
-        #     points_cnt += 1
 
         for query_object in query_result:
             points_total += float(query_object['points'])
