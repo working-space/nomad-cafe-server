@@ -22,15 +22,12 @@ class RatingViewSet(viewsets.ModelViewSet):
     serializer_class = RatingSerializer
 
     def create(self, request, *args, **kwargs):
-        self._setRating()
         return super().create(request, *args, **kwargs)
     
     def update(self, request, pk=None, *args, **kwargs):
-        self._setRating()
         return super().update(request, pk, *args, **kwargs)
 
     def partial_update(self, request, pk=None, *args, **kwargs):
-        self._setRating()
         return super().partial_update(request, pk, *args, **kwargs)
 
 
@@ -95,6 +92,3 @@ class CafeViewSet(viewsets.ReadOnlyModelViewSet):
             queryset = cafe_object
 
         return queryset
-
-    def _setRating(self):
-        pass
