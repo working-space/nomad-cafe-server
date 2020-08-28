@@ -1,4 +1,4 @@
-FROM nginx
+FROM tiangolo/uwsgi-nginx:python3.7
 
 ADD . /wwwroot/
 WORKDIR /wwwroot
