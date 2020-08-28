@@ -1,10 +1,5 @@
-FROM tiangolo/uwsgi-nginx:python3.7
+FROM nginx
 
 ADD . /wwwroot/
-WORKDIR /wwwroot
-
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
-RUN python manage.py collectstatic --noinput
 
 COPY ./config/nginx/nginx_on_ecs.conf /etc/nginx/conf.d/nginx.conf
