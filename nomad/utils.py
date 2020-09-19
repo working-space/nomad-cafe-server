@@ -35,7 +35,12 @@ def getAvgOfPoints(id):
     return query
 
 
-def getListByDistance(lon, lat, id=None):       
+def getListByDistance(lon, lat, dist, id=None):
+    if dist is None:
+        dist = 3000 # Default
+    else:
+        dist = int(dist)
+
     query = [
                 {
                     "$geoNear": {
@@ -45,7 +50,7 @@ def getListByDistance(lon, lat, id=None):
                         },
                         # "spherical": "true",
                         "key": "location",
-                        "maxDistance": 3000,
+                        "maxDistance": dist,
                         "distanceField": "dist.calculated",
                         "query": {
                             "road_addr": {"$regex": '^서울'}
