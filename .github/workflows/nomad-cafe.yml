@@ -118,5 +118,3 @@ jobs:
         cd /home/ubuntu
         ./ecr-login.sh
         kubectl set image deployment/nomadcafe-deployment-da0de26a nomad-cafe=$ECR_REGISTRY/$ECR_REPOSITORY:$VERSION
-        rm *.txt
-
