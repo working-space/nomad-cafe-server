@@ -142,7 +142,6 @@ services:
 
 [with AWS Cognito](https://djangostars.com/blog/bootstrap-django-app-with-cognito/)
 
-
 [Static file 처리](https://nachwon.github.io/django-deploy-4-static/)
 
 [Testcode 작성](https://new93helloworld.tistory.com/285)
@@ -150,6 +149,22 @@ services:
 [Model 내 Table 설정](https://docs.djangoproject.com/en/3.0/ref/models/options/)
 
 [여러 개의 DB를 연동하기](https://newpower.tistory.com/203)
+
+[CORS 설정](https://blog.thereis.xyz/41)
+
+[Django Rest Framework에서 Result JSON이 OrderedDict로 출력될 때](https://stackoverflow.com/questions/28722297/drf-testing-instead-of-json-an-ordereddict-is-returned)
+
+```python
+class ConfigSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Config
+        fields = ('id', 'url', 'email', "result",)
+        
+# COPY NEXT 3 LINES AND CHANGE 'result' WITH THE JSON MEMBER THAT CAUSE THE PROBLEM
+    result = serializers.SerializerMethodField()
+    def get_result(self, obj):
+        return obj.result
+```
 
 ##### 기타
 
