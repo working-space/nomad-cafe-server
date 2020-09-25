@@ -46,9 +46,25 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
+        echo $VERSION > version.txt
+        echo $ECR_REGISTRY > registry-name.txt
+
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$VERSION"
         echo "::set-output name=version::$VERSION"
         echo "::set-output name=git-commit-msg::$GIT_COMMIT_MSG"
+
+    - name: Upload version
+      uses: actions/upload-artifact@v2
+      with:
+        name: version
+        path: version.txt
+
+    - name: Upload registry name
+      uses: actions/upload-artifact@v2
+      with:
+        name: registry-name
+        path: registry-name.txt
+
     - name: nomad cafe nginx to Amazon ECR
       id: build-nginx-image
       env:
@@ -83,15 +99,24 @@ jobs:
     name: Deploy
     runs-on: [nomad-cafe]
     steps:
+    - name: Download version
+      uses: actions/download-artifact@v2
+      with:
+        name: version
+    - name: Download registry name
+      uses: actions/download-artifact@v2
+      with:
+        name: registry-name
     - name: Deploy to nomad cafe k8s
       env:
-        ECR_REGISTRY: ${{ jobs.build.steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: nomad-cafe
-        VERSION: ${{ jobs.build.steps.build-web-image.outputs.version }}
         KUBECONFIG: /home/ubuntu/.kube/config
         AWS_SHARED_CREDENTIALS_FILE: /home/ubuntu/.aws/credentials
       run: |
+        VERSION=`cat version.txt`
+        ECR_REGISTRY=`cat registry-name.txt`
         cd /home/ubuntu
         ./ecr-login.sh
         kubectl set image deployment/nomadcafe-deployment-da0de26a nomad-cafe=$ECR_REGISTRY/$ECR_REPOSITORY:$VERSION
+        rm *.txt
 
