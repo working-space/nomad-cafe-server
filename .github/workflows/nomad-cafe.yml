@@ -79,10 +79,11 @@ jobs:
         prerelease: false
 
   deploy:
+    needs: [build]
+    name: Deploy
+    runs-on: [threemin]
+    steps:
     - name: Deploy to nomad cafe k8s
-      needs: [build]
-      runs-on: [nomad-cafe]
-      id: deploy-nomad-cafe
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: nomad-cafe
