@@ -85,9 +85,9 @@ jobs:
     steps:
     - name: Deploy to nomad cafe k8s
       env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REGISTRY: ${{ job.build.steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: nomad-cafe
-        VERSION: ${{ steps.build-web-image.outputs.version }}
+        VERSION: ${{ job.build.steps.build-web-image.outputs.version }}
         KUBECONFIG: /home/ubuntu/.kube/config
         AWS_SHARED_CREDENTIALS_FILE: /home/ubuntu/.aws/credentials
       run: |
