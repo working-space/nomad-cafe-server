@@ -81,7 +81,7 @@ jobs:
   deploy:
     needs: [build]
     name: Deploy
-    runs-on: [threemin]
+    runs-on: [nomad-cafe]
     steps:
     - name: Deploy to nomad cafe k8s
       env:
