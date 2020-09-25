@@ -64,47 +64,31 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$VERSION"
 
-#    - name: Download task definition
-#      id: download-task-def
-#      run: |
-#        cd $GITHUB_WORKSPACE
-#        aws ecs describe-task-definition --task-definition nomad-cafe --query taskDefinition > task-definition.json
-#        echo "::set-output name=task-def-file-path::$GITHUB_WORKSPACE/task-definition.json"
-#
-#    - name: update nginx task definition
-#      id: task-def-nginx
-#      uses: aws-actions/amazon-ecs-render-task-definition@v1
-#      with:
-#        task-definition: ${{ steps.download-task-def.outputs.task-def-file-path }}
-#        container-name: nomad-cafe-nginx
-#        image: ${{ steps.build-nginx-image.outputs.image }}
-#
-#    - name: update web task definition
-#      id: task-def-web
-#      uses: aws-actions/amazon-ecs-render-task-definition@v1
-#      with:
-#        task-definition: ${{ steps.task-def-nginx.outputs.task-definition }}
-#        container-name: nomad-cafe
-#        image: ${{ steps.build-web-image.outputs.image }}
-#
-#    - name: Deploy Amazon ECS task definition
-#      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-#      with:
-#        task-definition: ${{ steps.task-def-web.outputs.task-definition }}
-#        service: nomad-cafe
-#        cluster: nomad-cafe
-#        wait-for-service-stability: true
-#
-#    - name: Create Release
-#      id: create-release
-#      uses: actions/create-release@v1
-#      if: github.ref == 'refs/heads/master'
-#      env:
-#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#      with:
-#        tag_name: ${{ steps.build-web-image.outputs.version }}
-#        release_name: Release ${{ steps.build-web-image.outputs.version }}
-#        body: |
-#          ${{ steps.build-web-image.outputs.git-commit-msg }}
-#        draft: false
-#        prerelease: false
+    - name: Deploy to nomad cafe k8s
+      needs: [build-web-image]
+      runs-on: [nomad-cafe]
+      id: deploy-nomad-cafe
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: nomad-cafe
+        VERSION: ${{ steps.build-web-image.outputs.version }}
+        KUBECONFIG: /home/ubuntu/.kube/config
+        AWS_SHARED_CREDENTIALS_FILE: /home/ubuntu/.aws/credentials
+      run: |
+        cd /home/ubuntu
+        ./ecr-login.sh
+        kubectl set image deployment/nomadcafe-deployment-da0de26a nomad-cafe=$ECR_REGISTRY/$ECR_REPOSITORY:$VERSION
+
+    - name: Create Release
+      id: create-release
+      uses: actions/create-release@v1
+      if: github.ref == 'refs/heads/master'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.build-web-image.outputs.version }}
+        release_name: Release ${{ steps.build-web-image.outputs.version }}
+        body: |
+          ${{ steps.build-web-image.outputs.git-commit-msg }}
+        draft: false
+        prerelease: false
