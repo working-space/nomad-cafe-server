@@ -64,21 +64,6 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$VERSION"
 
-    - name: Deploy to nomad cafe k8s
-      needs: [build-web-image]
-      runs-on: [nomad-cafe]
-      id: deploy-nomad-cafe
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: nomad-cafe
-        VERSION: ${{ steps.build-web-image.outputs.version }}
-        KUBECONFIG: /home/ubuntu/.kube/config
-        AWS_SHARED_CREDENTIALS_FILE: /home/ubuntu/.aws/credentials
-      run: |
-        cd /home/ubuntu
-        ./ecr-login.sh
-        kubectl set image deployment/nomadcafe-deployment-da0de26a nomad-cafe=$ECR_REGISTRY/$ECR_REPOSITORY:$VERSION
-
     - name: Create Release
       id: create-release
       uses: actions/create-release@v1
@@ -92,3 +77,20 @@ jobs:
           ${{ steps.build-web-image.outputs.git-commit-msg }}
         draft: false
         prerelease: false
+
+  deploy:
+    - name: Deploy to nomad cafe k8s
+      needs: [build]
+      runs-on: [nomad-cafe]
+      id: deploy-nomad-cafe
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: nomad-cafe
+        VERSION: ${{ steps.build-web-image.outputs.version }}
+        KUBECONFIG: /home/ubuntu/.kube/config
+        AWS_SHARED_CREDENTIALS_FILE: /home/ubuntu/.aws/credentials
+      run: |
+        cd /home/ubuntu
+        ./ecr-login.sh
+        kubectl set image deployment/nomadcafe-deployment-da0de26a nomad-cafe=$ECR_REGISTRY/$ECR_REPOSITORY:$VERSION
+
