@@ -39,7 +39,7 @@ def getListByDistance(lon, lat, dist, id=None):
     if dist is None:
         dist = 3000 # Default
     else:
-        dist = int(dist)
+        dist = int(float(dist))
 
     query = [
                 {
