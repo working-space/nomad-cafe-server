@@ -67,7 +67,7 @@ class CafeViewSet(viewsets.ReadOnlyModelViewSet):
         if address is not None:
             pass
 
-        queryset = self._getDistanceByPosition(lon, lat, dist)
+        queryset = self._getDistanceByPosition(lon=lon, lat=lat, dist=dist)
 
         return queryset
 
