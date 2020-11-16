@@ -47,7 +47,7 @@ class CafeViewSet(viewsets.ReadOnlyModelViewSet):
         if lon is None or lat is None:
             return super().retrieve(request, *args, **kwargs)
 
-        instance = self._getDistanceByPosition(lon, lat, pk)
+        instance = self._getDistanceByPosition(lon=lon, lat=lat, pk=pk)
 
         if instance:
             serializer = self.get_serializer(instance[0])
@@ -67,11 +67,11 @@ class CafeViewSet(viewsets.ReadOnlyModelViewSet):
         if address is not None:
             pass
 
-        queryset = self._getDistanceByPosition(lon, lat, dist)
+        queryset = self._getDistanceByPosition(lon=lon, lat=lat, dist=dist)
 
         return queryset
 
-    def _getDistanceByPosition(self, lon, lat, dist, pk=None):
+    def _getDistanceByPosition(self, lon, lat, dist=None, pk=None):
         queryset = self.queryset
         
         if all(pos is not None for pos in [lon, lat]):
