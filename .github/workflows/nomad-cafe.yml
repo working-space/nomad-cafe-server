@@ -94,27 +94,3 @@ jobs:
         draft: false
         prerelease: false
 
-  deploy:
-    needs: [build]
-    name: Deploy
-    runs-on: [nomad-cafe]
-    steps:
-    - name: Download version
-      uses: actions/download-artifact@v2
-      with:
-        name: version
-    - name: Download registry name
-      uses: actions/download-artifact@v2
-      with:
-        name: registry-name
-    - name: Deploy to nomad cafe k8s
-      env:
-        ECR_REPOSITORY: nomad-cafe
-        KUBECONFIG: /home/ubuntu/.kube/config
-        AWS_SHARED_CREDENTIALS_FILE: /home/ubuntu/.aws/credentials
-      run: |
-        VERSION=`cat version.txt`
-        ECR_REGISTRY=`cat registry-name.txt`
-        cd /home/ubuntu
-        ./ecr-login.sh
-        kubectl set image deployment/nomadcafe-deployment-da0de26a nomad-cafe=$ECR_REGISTRY/$ECR_REPOSITORY:$VERSION
