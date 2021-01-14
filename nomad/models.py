@@ -71,7 +71,7 @@ class Cafe(mongo_models.Model):
     homepage = mongo_models.CharField(max_length=512)
     img = mongo_models.CharField(max_length=512)
     tags = mongo_models.JSONField()
-    points = mongo_models.DecimalField(max_digits=5, decimal_places=3)
+    points = mongo_models.DecimalField(max_digits=5, default=0.0 decimal_places=3)
     region_1depth_name = mongo_models.CharField(max_length=512)
     region_2depth_name = mongo_models.CharField(max_length=512)
     region_3depth_name = mongo_models.CharField(max_length=512)
