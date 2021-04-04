@@ -28,6 +28,8 @@ router.register(r'cafes', views.CafeViewSet)
 router.register(r'admin-users', views.AdminViewSet)
 router.register(r'tags', views.TagViewSet)
 router.register(r'ratings', views.RatingViewSet)
+router.register(r'comments', views.CommentViewSet)
+router.register(r'bookmarks', views.BookmarkViewSet)
 
 schema_view = get_schema_view(
    openapi.Info(

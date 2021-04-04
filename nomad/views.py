@@ -1,10 +1,11 @@
 from django.contrib.auth.models import User as Admin
 from django.db import transaction
 from django.db.models import F
-from .models import Cafe, Location, Member, Rating, Tag
+from django.forms.models import model_to_dict
+from .models import Cafe, Location, Member, Rating, Tag, Comment, Bookmark
 from rest_framework import viewsets
 from rest_framework.response import Response
-from nomad.serializers import MemberSerializer, CafeSerializer, RatingSerializer, AdminSerializer, TagSerializer
+from nomad.serializers import MemberSerializer, CafeSerializer, RatingSerializer, AdminSerializer, TagSerializer, CommentSerializer, BookmarkSerializer
 from nomad.utils import getListByDistance, getCountOfTags, getAvgOfPoints
 
 class AdminViewSet(viewsets.ModelViewSet):
@@ -16,6 +17,68 @@ class MemberViewSet(viewsets.ModelViewSet):
     queryset = Member.objects.all()
     serializer_class = MemberSerializer
 
+
+class BookmarkViewSet(viewsets.ModelViewSet):
+    queryset = Bookmark.objects.all()
+    serializer_class = BookmarkSerializer
+
+
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    
+    @transaction.atomic
+    def _update_comments(self, request, *args, **kwargs): 
+        cafe_id = request.data['cafe_id']
+        cafe_obj = Cafe.objects.get(pk=cafe_id)
+
+        # Get comments
+        query_result = Comment.objects.filter(cafe_id=cafe_id)
+        comments = []
+
+        if query_result:
+            # print(query_result)
+            for comment in query_result:
+                comment = comment.__dict__
+                converted_comment = {}
+                converted_comment['id'] = comment['id']
+                converted_comment['user_id'] = comment['user_id']
+                converted_comment['content'] = comment['content']
+                converted_comment['create_dt'] = comment['create_dt']
+                converted_comment['update_dt'] = comment['update_dt']
+                comments.append(converted_comment)
+
+        # Commit comments
+        cafe_obj.comments = comments
+
+        # Save comments
+        cafe_obj.save(update_fields=['comments'])
+        
+        return None
+
+    def retrieve(self, request, pk=None, *args, **kwargs):
+        return super().retrieve(request, pk, *args, **kwargs)
+
+    @transaction.atomic
+    def create(self, request, *args, **kwargs):
+        result = super().create(request, *args, **kwargs)
+        self._update_comments(request, *args, **kwargs)
+
+        return result
+    
+    @transaction.atomic
+    def update(self, request, pk=None, *args, **kwargs):
+        result = super().update(request, pk, *args, **kwargs)
+        self._update_comments(request, *args, **kwargs)
+
+        return result
+
+    @transaction.atomic
+    def partial_update(self, request, pk=None, *args, **kwargs):
+        result = super().partial_update(request, pk, *args, **kwargs)
+        self._update_comments(request, *args, **kwargs)
+
+        return result
 
 class RatingViewSet(viewsets.ModelViewSet):
     queryset = Rating.objects.all()
@@ -93,7 +156,7 @@ class CafeViewSet(viewsets.ReadOnlyModelViewSet):
     def retrieve(self, request, pk=None, *args, **kwargs):
         lon = request.query_params.get('lon', None)
         lat = request.query_params.get('lat', None)
-
+        
         if lon is None or lat is None:
             return super().retrieve(request, *args, **kwargs)
 
@@ -109,13 +172,9 @@ class CafeViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         queryset = self.queryset
 
-        address = self.request.query_params.get('address', None)
         lon = self.request.query_params.get('lon', None)
         lat = self.request.query_params.get('lat', None)
         dist = self.request.query_params.get('dist', None)
-
-        if address is not None:
-            pass
 
         queryset = self._getDistanceByPosition(lon=lon, lat=lat, dist=dist)
 
