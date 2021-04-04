@@ -1,0 +1,88 @@
+# name: WorkingSpace CI/CD
+# on:
+#   push:
+#     branches:
+#       - master
+#       - develop
+#       - feature/cdk8s
+# jobs:
+#   build:
+#     name: Build
+#     runs-on: ubuntu-latest
+#     steps:
+#     - name: Check out code
+#       uses: actions/checkout@v1
+
+#     - name: Configure AWS credentials
+#       uses: aws-actions/configure-aws-credentials@v1
+#       with:
+#         aws-access-key-id: ${{ secrets.aws_access_key }}
+#         aws-secret-access-key: ${{ secrets.aws_secret_key }}
+#         aws-region: ap-northeast-2
+
+#     - name: Login to Amazon ECR
+#       id: login-ecr
+#       uses: aws-actions/amazon-ecr-login@v1
+
+#     - name: working space web to Amazon ECR
+#       id: build-web-image
+#       env:
+#         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#         ECR_REPOSITORY: nomad-cafe
+#       run: |
+#         cd $GITHUB_WORKSPACE
+#         GIT_HASH=$(git rev-parse --short "$GITHUB_SHA")
+#         VERSION=`cat ./version.txt`
+#         GIT_COMMIT_MSG=`git show -s`
+#         BRANCH=${GITHUB_REF#refs/heads/}
+#         if [ "${BRANCH}" != "master" ]; then
+#         	VERSION=$VERSION-$GIT_HASH
+#         fi
+#         # web
+#         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION -f Dockerfile_with_apm .
+#         docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION $ECR_REGISTRY/$ECR_REPOSITORY:latest
+#         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION
+#         docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+#         echo $VERSION > version.txt
+#         echo $ECR_REGISTRY > registry-name.txt
+#         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$VERSION"
+#         echo "::set-output name=version::$VERSION"
+#         echo "::set-output name=git-commit-msg::$GIT_COMMIT_MSG"
+#     - name: Upload version
+#       uses: actions/upload-artifact@v2
+#       with:
+#         name: version
+#         path: version.txt
+
+#     - name: Upload registry name
+#       uses: actions/upload-artifact@v2
+#       with:
+#         name: registry-name
+#         path: registry-name.txt
+
+#     - name: working space nginx to Amazon ECR
+#       id: build-nginx-image
+#       env:
+#         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#         ECR_REPOSITORY: nomad-cafe-nginx
+#         VERSION: ${{ steps.build-web-image.outputs.version }}
+#       run: |
+#         cd $GITHUB_WORKSPACE
+#         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION -f Dockerfile_nginx .
+#         docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION $ECR_REGISTRY/$ECR_REPOSITORY:latest
+#         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION
+#         docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+#         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$VERSION"
+#     - name: Create Release
+#       id: create-release
+#       uses: actions/create-release@v1
+#       if: github.ref == 'refs/heads/master'
+#       env:
+#         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#       with:
+#         tag_name: ${{ steps.build-web-image.outputs.version }}
+#         release_name: Release ${{ steps.build-web-image.outputs.version }}
+#         body: |
+#           ${{ steps.build-web-image.outputs.git-commit-msg }}
+#         draft: false
+#         prerelease: false
