@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User as Admin
-from .models import Cafe, Member, Rating, Tag
+from .models import Cafe, Member, Rating, Tag, Comment, Bookmark
 from rest_framework import serializers
 from nomad.utils import JSONObjectWriteAndReadField, getCountOfTags, getAvgOfPoints
 from collections import Counter
@@ -51,9 +51,43 @@ class MemberSerializer(serializers.HyperlinkedModelSerializer):
         fields = [
             'id',
             'name',
+            'nickname',
+            'profile_image',
+            'oauth_vender',
+            'refresh_token',
+            'access_token',
+            'oauth_id',
+            'favorite_cafes',
             'create_dt',
             'update_dt',
             'url',
+        ]
+
+    favorite_cafes = JSONObjectWriteAndReadField()
+
+
+class BookmarkSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Bookmark
+        fields = [
+            'id',
+            'cafe_id',
+            'user_id',
+            'create_dt',
+            'update_dt',
+        ]
+
+
+class CommentSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Comment
+        fields = [
+            'id',
+            'cafe_id',
+            'user_id',
+            'content',
+            'create_dt',
+            'update_dt',
         ]
 
 
@@ -81,6 +115,7 @@ class CafeSerializer(serializers.HyperlinkedModelSerializer):
             'homepage',
             'img',
             'tags',
+            'comments',
             'region_1depth_name',
             'region_2depth_name',
             'region_3depth_name',
@@ -94,3 +129,4 @@ class CafeSerializer(serializers.HyperlinkedModelSerializer):
     location = JSONObjectWriteAndReadField()
 
     tags = JSONObjectWriteAndReadField()
+    comments = JSONObjectWriteAndReadField()
